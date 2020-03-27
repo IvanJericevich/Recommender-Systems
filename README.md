@@ -2,6 +2,17 @@
 ## Introduction
 Recommender systems are software tools and techniques that provide suggestions for items to be of use to a user. The collaborative filtering approach evaluates items using the opinions or ratings of other users. Alternatively, the content-based approach works by learning the items’ features to match the user’s preferences and interests. The code found in this repository implements several collaborative filtering and content-based methods: K-nearest neighbours, hierarchical clustering, association rule mining, ordinal logistic regression, classification trees, TF-IDF, and matrix factorisation.
 
+|Algorithm     |MAE  |RMSE |
+|--------------|:---:|:---:|
+|Naive         |0.722|0.927|
+|User-based KNN|0.659|0.859|
+|Item-based KNN|0.493|0.663|
+|Hierarchical  |0.824|1.077|
+|MF-SGD        |0.737|1.010|
+|Bias MF-SGD   |0.767|1.120|
+|K-medoid      |1.973|2.018|
+|Regression    |0.766|1.040|
+
 ## Prerequisites
 * A good understanding of popular recommender system techniques.
 * Competency in R.
@@ -41,12 +52,21 @@ User_Based_Recommendation(userId = 10, W = W_users, k = nrow(R) R = R)
 ```
 Where `userId` specifies the user for which ratings are to be predicted; `W_users` is the user correlation matrix; `k` ; `R` is the user-item ratings matrix. In this case `k` is specified explicitly as all users.
 
-[Functions/Pearson Correlation.cpp](../Recommender-Systems/master/Functions/Pearson Correlation.cpp) contains the functions for computing both the item and user correlation matrices. Both take the user-item ratings matrix `R` as their argument (which is large - hence the need for computation in `C++`) and return a matrix.
+[Functions/Pearson Correlation.cpp](../Recommender-Systems/master/Functions/Pearson-Correlation.cpp) contains the functions for computing both the item and user correlation matrices. Both take the user-item ratings matrix `R` as their argument (which is large - hence the need for computation in `C++`) and return a matrix.
 
 [Functions/Supplementary.cpp](../Recommender-Systems/master/Functions/Supplementary.cpp) contains two functions for data preparation (`substrLeft` and `substrRight`) and two functions for evaluating the performance of each recommender system (`MAE` and `RMSE`).
 
+Lastly, each of the `R` files in the root of the repository are subsectioned. In each file, before implementing the main technique, the first two sections should be run as is. The first section, "Preliminaries", installs and loads required packages and import required functions. The second section, "Data Preparation", is self-explanatory.
+
+### Naive
+A naive recommender sytem is specified as setting predicted ratings by each user to be their mean rating across all movies rated by that user. This serves only as a benchmark on which to compare the MAE and RMSE performance of all other techniques.
+
 ### KNN
+Rating predictions on all movies by all users are conducted in a parallelized farmework and then compared to the actual user-item ratings matrix using the mean absolute error and root mean squared error performance metrics. The example below shows how to produce a sorted list of recommendations on movies unwatched by user 10.
 ```R
-# Get movie recommendations for user userId = 10
+## Get movie recommendations for user userId = 10
+# Item-Based KNN
 item_based_recommendations = as.numeric(names(sort(Get_Recommendations(userId = 10, W = W_items)[is.na(R[10,])], decreasing = TRUE)))
+# User-Based KNN
+user_based_recommendations = as.numeric(names(sort(User_Based_Recommendation(userId = 10, W = W_users, k = nrow(R), R = R)[is.na(R[10,])], decreasing = TRUE)))
 ```
