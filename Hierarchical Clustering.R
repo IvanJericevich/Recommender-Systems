@@ -1,5 +1,5 @@
 # Title: Recommender Systems
-# Authors: Ivan Jericevich
+# Authors: Ivan Jericevich & Yovna Junglee
 # 1. Preliminaries
 # 2. Data Preparation
 # 3. Hierarchical Clustering
